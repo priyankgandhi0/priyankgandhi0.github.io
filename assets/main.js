@@ -77,16 +77,32 @@ setTimeout(() => {
                     var TaskArray = [];
                     const TaskData = {type:"item_move", uuid:"'"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"'", args:{id:$(currentTask).data('id'),project_id:data[1].id}};
                     TaskArray.push(TaskData);
-                    promiseajaxcall3('https://api.todoist.com/sync/v9/sync', TaskArray, 'POST').then(function (taskdata) {
-                        console.log(taskdata);    
-                        // if (!$.isEmptyObject(taskdata)) {
-                        //     $.each(taskdata, function (key, value) {
-                        //         var html = `<li class="task" data-id="${value.id}">${value.content}
-                        //             </li>`;
-                        //         $('.task-list').append(html);
-                        //     });
+
+                    API("https://api.todoist.com/sync/v9/sync", TaskArray, "POST").then((result) => {
+                        // if (!result) {
+                        //     window.location.href = "register";
+                        // } else if (result) {
+                        //     window.location.href = "registersuccess";
+                        // } else {
+                        //     window.location.href = "register";
                         // }
-                    }).catch(function (err) { });
+                        console.log(result);   
+                    }).catch((reason) => {
+                        console.log(reason)
+                        // window.location.href = "register";
+                    });
+
+
+                    // promiseajaxcall3('https://api.todoist.com/sync/v9/sync', TaskArray, 'POST').then(function (taskdata) {
+                    //     console.log(taskdata);    
+                    //     // if (!$.isEmptyObject(taskdata)) {
+                    //     //     $.each(taskdata, function (key, value) {
+                    //     //         var html = `<li class="task" data-id="${value.id}">${value.content}
+                    //     //             </li>`;
+                    //     //         $('.task-list').append(html);
+                    //     //     });
+                    //     // }
+                    // }).catch(function (err) { });
                 }
             }).catch(function (err) { });
 
@@ -225,6 +241,29 @@ async function promiseajaxcall3(url, dataString, method = "POST") {
             }
         });
     })
+}
+
+
+function API(url, data, method = "POST") {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: url,
+            type: method,
+            contentType: "application/json",
+            beforeSend: function(xhr) { 
+                xhr.setRequestHeader("Authorization", "Bearer 0501b84915c4ece7901afdfd82a1625bca190b30"); 
+              },
+            data: JSON.stringify(data),
+            dataType: 'json',
+            encode: true,
+            success: function(ddata) {
+                resolve(ddata);
+            },
+            error: function(error) {
+                reject(error);
+            }
+        });
+    });
 }
 
 window.onload = function () {
