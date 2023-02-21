@@ -78,19 +78,35 @@ setTimeout(() => {
                     const TaskData = {type:"item_move", uuid:"'"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"-"+makeid(5)+"'", args:{id:$(currentTask).data('id'),project_id:data[1].id}};
                     TaskArray.push(TaskData);
 
-                    API("https://api.todoist.com/sync/v9/sync", TaskArray, "POST").then((result) => {
-                        // if (!result) {
-                        //     window.location.href = "register";
-                        // } else if (result) {
-                        //     window.location.href = "registersuccess";
-                        // } else {
-                        //     window.location.href = "register";
-                        // }
-                        console.log(result);   
-                    }).catch((reason) => {
-                        console.log(reason)
-                        // window.location.href = "register";
-                    });
+                    // API("https://api.todoist.com/sync/v9/sync", TaskArray, "POST").then((result) => {
+                    //     // if (!result) {
+                    //     //     window.location.href = "register";
+                    //     // } else if (result) {
+                    //     //     window.location.href = "registersuccess";
+                    //     // } else {
+                    //     //     window.location.href = "register";
+                    //     // }
+                    //     console.log(result);   
+                    // }).catch((reason) => {
+                    //     console.log(reason)
+                    //     // window.location.href = "register";
+                    // });
+
+
+
+
+                    fetch("https://api.todoist.com/sync/v9/sync", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            commands: TaskArray
+                        }),
+                        headers: {
+                          "Content-type": "application/json; charset=UTF-8"
+                        }
+                      })
+                        .then((response) => response.json())
+                        .then((json) => console.log(json));
+
 
 
                     // promiseajaxcall3('https://api.todoist.com/sync/v9/sync', TaskArray, 'POST').then(function (taskdata) {
