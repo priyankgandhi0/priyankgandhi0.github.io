@@ -209,7 +209,7 @@ async function promiseajaxcall3(url, dataString, method = "POST") {
             beforeSend: function(xhr) { 
                 xhr.setRequestHeader("Authorization", "Bearer 0501b84915c4ece7901afdfd82a1625bca190b30"); 
                 xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-                xhr.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
               },
             cache: false,
             contentType: "application/json",
