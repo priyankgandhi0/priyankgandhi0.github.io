@@ -1,46 +1,186 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/assets/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+        // Ignore this in your implementation
+        window.isMbscDemo = true;
+    </script>
+
+    <title>
+        Checklist
+    </title>
+
+
+    <!-- Mobiscroll JS and CSS Includes -->
+    <link rel="stylesheet" href="css/mobiscroll.jquery.min.css">
+
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body,
+        html {
+            height: 100%;
+        }
+    </style>
+
 </head>
 
 <body>
-    <div class="container">
-        <section class="clear">
-            <header class="list-header">
-                <div class="circles">
-                    <div></div>
-                    <div></div>
-                    <div></div>
+
+    <div mbsc-page class="demo-checklist">
+        <div style="height:100%">
+            <div>
+                <div class="mbsc-form-group">
+                    <ul id="demo" class="mbsc-cloak" mbsc-enhance>
+                        <!-- <li>Do the laundry</li>
+                        <li>Check out new Mobiscroll features</li>
+                        <li>Don't forget mom's birthday!</li>
+                        <li>Update my app with the latest Mobiscroll</li>
+                        <li>Buy new shoes</li>
+                        <li>Need ketchup for pizza</li> -->
+                    </ul>
                 </div>
-
-                <h1>New Tasks</h1>
-
-                <div class="menu">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </header>
-
-            <ul class="task-list">
-            </ul>
-        </section>
-
-        <br>
-
-
+            </div>
+        </div>
     </div>
-    <script>
-    // BASE_URL = "<?php echo base_url(); ?>";
+
+
+    <script src="assets/jquery.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script> -->
+    <script src="js/mobiscroll.jquery.min.js"></script>
+    <script src="./assets/main.js">
     </script>
-    <script src="/assets/jquery.min.js"> </script>
-    <script src="/assets/main.js"> </script>
+    <script>
+        mobiscroll.settings = {
+            theme: 'ios',
+            themeVariant: 'light',
+            lang: 'en'
+        };
+        setTimeout(() => {
+            $(function() {
+
+                var id = 6;
+
+                // Mobiscroll Listview initialization
+                $('#demo').mobiscroll().listview({
+                    theme: 'ios', // Specify theme like: theme: 'ios' or omit setting to use default
+                    themeVariant: 'light', // More info about themeVariant: https://docs.mobiscroll.com/4-10-10/listview#opt-themeVariant
+                    lang: 'en', // Specify language like: lang: 'pl' or omit setting to use default
+                    sortable: { // More info about sortable: https://docs.mobiscroll.com/4-10-10/listview#opt-sortable
+                        handle: 'left'
+                    },
+                    stages: { // More info about stages: https://docs.mobiscroll.com/4-10-10/listview#opt-stages
+                        left: [{
+                            key: 'stage1',
+                            icon: '',
+                            color: '#31c6e7',
+                            text: 'Add',
+                            action: function(event, inst) {
+                                promiseajaxcall2('https://api.todoist.com/rest/v2/projects', '', 'GET').then(function(data) {
+                                    if (!$.isEmptyObject(data[1])) {
+                                        promiseajaxcall2('https://api.todoist.com/rest/v2/tasks?ids=' + $(event.target).data('id'), '', 'GET').then(function(taskdata) {
+                                            if (!$.isEmptyObject(taskdata)) {
+                                                if (!$.isEmptyObject(taskdata)) {
+                                                    const TaskData = {
+                                                        'assigner_id': taskdata[0].assigner_id,
+                                                        'assignee_id': taskdata[0].assignee_id,
+                                                        'project_id': data[1].id,
+                                                        'section_id': taskdata[0].section_id,
+                                                        'parent_id': taskdata[0].parent_id,
+                                                        'order': taskdata[0].order,
+                                                        'content': taskdata[0].content,
+                                                        'description': taskdata[0].description,
+                                                        'labels': taskdata[0].labels,
+                                                        'priority': taskdata[0].priority,
+                                                    };
+                                                    promiseajaxcall2('https://api.todoist.com/rest/v2/tasks/' + $(event.target).data('id'), '', 'DELETE').then(function(taskdata) {
+                                                        API('https://api.todoist.com/rest/v2/tasks', TaskData, 'POST').then(function(newtask) {
+                                                            inst.remove(event.target);
+                                                            promiseajaxcall2('https://api.todoist.com/rest/v2/projects', '', 'GET').then(function(data) {
+                                                                if (!$.isEmptyObject(data[0])) {
+                                                                    promiseajaxcall2('https://api.todoist.com/rest/v2/tasks?project_id=' + data[0].id, '', 'GET').then(function(taskdata) {
+                                                                        if (!$.isEmptyObject(taskdata)) {
+                                                                            if (!$.isEmptyObject(taskdata[0])) {
+
+                                                                                inst.add(taskdata[0].id, taskdata[0].content, event.index + 1);
+                                                                            }
+                                                                        }
+                                                                    }).catch(function(err) {});
+                                                                }
+                                                            }).catch(function(err) {});
+                                                        }).catch(function(err) {});
+                                                    }).catch(function(err) {});
+                                                }
+                                            }
+                                        }).catch(function(err) {});
+                                    }
+                                }).catch(function(err) {});
+                                return false;
+                            }
+                        }],
+                        right: [{
+                            key: 'stage2',
+                            color: '#009688',
+                            text: 'Add',
+                            icon: '',
+                            action: function(event, inst) {
+                                promiseajaxcall2('https://api.todoist.com/rest/v2/projects', '', 'GET').then(function(data) {
+                                    if (!$.isEmptyObject(data[2])) {
+                                        promiseajaxcall2('https://api.todoist.com/rest/v2/tasks?ids=' + $(event.target).data('id'), '', 'GET').then(function(taskdata) {
+                                            if (!$.isEmptyObject(taskdata)) {
+                                                if (!$.isEmptyObject(taskdata)) {
+                                                    const TaskData = {
+                                                        'assigner_id': taskdata[0].assigner_id,
+                                                        'assignee_id': taskdata[0].assignee_id,
+                                                        'project_id': data[2].id,
+                                                        'section_id': taskdata[0].section_id,
+                                                        'parent_id': taskdata[0].parent_id,
+                                                        'order': taskdata[0].order,
+                                                        'content': taskdata[0].content,
+                                                        'description': taskdata[0].description,
+                                                        'labels': taskdata[0].labels,
+                                                        'priority': taskdata[0].priority,
+                                                    };
+                                                    promiseajaxcall2('https://api.todoist.com/rest/v2/tasks/' + $(event.target).data('id'), '', 'DELETE').then(function(taskdata) {
+                                                        API('https://api.todoist.com/rest/v2/tasks', TaskData, 'POST').then(function(newtask) {
+                                                            inst.remove(event.target);
+                                                            promiseajaxcall2('https://api.todoist.com/rest/v2/projects', '', 'GET').then(function(data) {
+                                                                if (!$.isEmptyObject(data[0])) {
+                                                                    promiseajaxcall2('https://api.todoist.com/rest/v2/tasks?project_id=' + data[0].id, '', 'GET').then(function(taskdata) {
+                                                                        if (!$.isEmptyObject(taskdata)) {
+                                                                            if (!$.isEmptyObject(taskdata[0])) {
+
+                                                                                inst.add(taskdata[0].id, taskdata[0].content, event.index + 1);
+                                                                            }
+                                                                        }
+                                                                    }).catch(function(err) {});
+                                                                }
+                                                            }).catch(function(err) {});
+                                                        }).catch(function(err) {});
+                                                    }).catch(function(err) {});
+                                                }
+                                            }
+                                        }).catch(function(err) {});
+                                    }
+                                }).catch(function(err) {});
+                                return false;
+                            }
+                        }]
+                    }
+
+                });
+
+            });
+        }, 3000);
+    </script>
 
 </body>
 
