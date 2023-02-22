@@ -65,6 +65,6 @@ window.onload = function() {
             }
         }).catch(function(err) {});
     } else {
-        window.location.replace("http://priyankgandhi0.github.io/todokey.html");
+        window.location.replace("http://priyankgandhi0.github.io/todoKey.html");
     }
 }
