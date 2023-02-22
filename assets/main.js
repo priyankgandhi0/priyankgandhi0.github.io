@@ -1,4 +1,5 @@
 async function promiseajaxcall2(url, dataString, method = "POST") {
+    showloader();
     return new Promise(function(resolve, reject) {
         $.ajax({
             url: url,
@@ -14,9 +15,11 @@ async function promiseajaxcall2(url, dataString, method = "POST") {
             dataType: 'JSON',
             error: function() {},
             success: function(response) {
+                hideloader();
                 resolve(response)
             },
             error: function(err) {
+                hideloader();
                 reject(err)
             }
         });
@@ -24,6 +27,7 @@ async function promiseajaxcall2(url, dataString, method = "POST") {
 }
 
 function API(url, data, method = "POST") {
+    showloader();
     return new Promise((resolve, reject) => {
         $.ajax({
             url: url,
@@ -36,9 +40,11 @@ function API(url, data, method = "POST") {
             dataType: 'json',
             encode: true,
             success: function(ddata) {
+                hideloader();
                 resolve(ddata);
             },
             error: function(error) {
+                hideloader();
                 reject(error);
             }
         });
@@ -46,7 +52,6 @@ function API(url, data, method = "POST") {
 }
 
 window.onload = function() {
-
     if (localStorage.getItem("TODOkey") != null) {
         promiseajaxcall2('https://api.todoist.com/rest/v2/projects', '', 'GET').then(function(data) {
             if (!$.isEmptyObject(data[0])) {
@@ -67,4 +72,15 @@ window.onload = function() {
     } else {
         window.location.replace("http://priyankgandhi0.github.io/key.html");
     }
+}
+
+
+function showloader() {
+    $(".preloader").css("display", "block !important;");
+    $(".preloader").show();
+}
+
+function hideloader() {
+    $(".preloader").css("display", "none;");
+    $(".preloader").hide();
 }
